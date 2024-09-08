@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ars Antiqua Dicussions
+    url: https://github.com/21CSM/ars-antiqua/discussions
+    about: For general questions and discussions.
+  - name: Ars Antiqua Wiki
+    url: https://github.com/21CSM/ars-antiqua/wiki
+    about: Wiki pages that contain useful documentation.

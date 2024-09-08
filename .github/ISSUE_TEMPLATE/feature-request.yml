@@ -1,0 +1,41 @@
+name: Feature Request
+description: Request a new feature.
+title: "As a X, I would like Y, so that I can Z"
+labels: ["feat"]
+assignees:
+  - 21CSM
+body:
+  - type: textarea
+    id: user-story
+    attributes:
+      label: User Story
+      description: Please replace the placeholders with the relevant details both here and in the issue title.
+      placeholder: As a X, I would like Y, so that I can Z.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why do you want this feature?
+      placeholder: "This feature would enable..."
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Relevant links, issues, PRs, or documentation regarding this feature request. (Optional)
+      placeholder: "Refer to #1"
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What would should happen to satisfy this feature request? Please add as a checklist.
+      placeholder: "- [ ] Should do X
+                    - [ ] Should do Y
+                    - [ ] Should do Z"
+    validations:
+      required: true
