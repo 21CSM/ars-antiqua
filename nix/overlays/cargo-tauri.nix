@@ -15,7 +15,7 @@
 rustPlatform.buildRustPackage rec {
   pname = "tauri";
   version = "2.0.0-beta.25";
-  
+
   src = fetchFromGitHub {
     owner = "tauri-apps";
     repo = "tauri";
@@ -31,10 +31,10 @@ rustPlatform.buildRustPackage rec {
   buildInputs = [ openssl ]
     ++ lib.optionals stdenv.isLinux [ glibc libsoup cairo gtk3 webkitgtk ]
     ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
-      CoreServices
-      Security
-      SystemConfiguration
-    ]);
+    CoreServices
+    Security
+    SystemConfiguration
+  ]);
 
   meta.mainProgram = "cargo-tauri";
 }
