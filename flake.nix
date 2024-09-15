@@ -19,7 +19,7 @@
         buildInputs = with pkgs; [
           rustToolchain openssl cargo-tauri
         ] ++ lib.optionals stdenv.isLinux [ pkg-config glib gtk3 webkitgtk libsoup ]
-          ++ lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.WebKit ];
+          ++ lib.optionals stdenv.isDarwin [ libiconv darwin.apple_sdk.frameworks.WebKit ];
       in {
         devShells.default = pkgs.mkShell {
           inherit buildInputs;
