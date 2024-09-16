@@ -28,6 +28,8 @@
           cargo-tauri
           nodejs_20
           pnpm
+          sqlite
+          diesel-cli
         ] ++ lib.optional (pkgs ? lldb) lldb
         ++ lib.optionals stdenv.isLinux [ pkg-config glib gtk3 webkitgtk libsoup ]
         ++ lib.optionals stdenv.isDarwin [ libiconv darwin.apple_sdk.frameworks.WebKit ];
