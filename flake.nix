@@ -31,7 +31,7 @@
           sqlite
           diesel-cli
         ] ++ lib.optional (pkgs ? lldb) lldb
-        ++ lib.optionals stdenv.isLinux [ pkg-config glib gtk3 webkitgtk libsoup ]
+        ++ lib.optionals stdenv.isLinux [ pkg-config glib gtk3 webkitgtk_4_1 libsoup librsvg libayatana-appindicator ]
         ++ lib.optionals stdenv.isDarwin [ libiconv darwin.apple_sdk.frameworks.WebKit ];
         checks = import ./nix/checks/check-dev-env.nix { inherit pkgs buildInputs; };
       in
