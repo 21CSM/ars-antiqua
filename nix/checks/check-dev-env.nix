@@ -26,7 +26,7 @@ pkgs.runCommand "check-dev-env"
   ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
     # Linux-specific checks
     pkg-config --exists gtk+-3.0 || { echo "GTK3 not found"; exit 1; }
-    pkg-config --exists webkit2gtk-4.0 || { echo "WebKitGTK not found"; exit 1; }
+    pkg-config --exists webkit2gtk-4.1 || { echo "WebKitGTK not found"; exit 1; }
     pkg-config --exists libsoup-2.4 || { echo "libsoup not found"; exit 1; }
   ''}
   ${pkgs.lib.optionalString pkgs.stdenv.isDarwin ''

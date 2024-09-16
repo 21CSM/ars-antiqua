@@ -29,3 +29,6 @@ jobs:
       - name: Run Nix flake checks
         run: |
           nix flake check
+      - name: Run Cargo tests
+        working-directory: ./src-tauri
+        run: nix develop -c cargo test
