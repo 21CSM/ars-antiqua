@@ -40,8 +40,10 @@ jobs:
           nix develop -c pnpm run test:integration
       - name: Build Project
         run: nix develop -c pnpm run build
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
+      - name: Deploy to Firebase Preview
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          name: build
-          path: build/
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ARS_ANTIQUA }}
+          projectId: ars-antiqua
+          channelId: "preview"
