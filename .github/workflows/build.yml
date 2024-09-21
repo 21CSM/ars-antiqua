@@ -37,5 +37,4 @@ jobs:
           nix develop -c pnpm run test:unit
       - name: Run Integration Tests
         run: |
-          nix develop -c pnpm exec playwright install
           nix develop -c pnpm run test:integration
