@@ -1,5 +1,4 @@
-name: Build
-
+name: Build and Deploy
 on:
   push:
     branches: [develop-firebase, main]
@@ -27,19 +26,33 @@ jobs:
       - name: Run Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: Run Nix Flake Checks
-        run: |
-          nix flake check
+        run: nix flake check
       - name: Install Dependencies
-        run: |
-          nix develop -c pnpm install
+        run: nix develop -c pnpm install
       - name: Run Unit Tests
-        run: |
-          nix develop -c pnpm run test:unit
+        run: nix develop -c pnpm run test:unit
       - name: Run Integration Tests
-        run: |
-          nix develop -c pnpm run test:integration
+        run: nix develop -c pnpm run test:integration
       - name: Build Project
         run: nix develop -c pnpm run build
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build
+
+  deploy-preview:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: build
       - name: Deploy to Firebase Preview
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
