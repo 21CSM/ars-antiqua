@@ -1,7 +1,5 @@
-name: Build and Deploy
+name: Deploy Preview
 on:
-  push:
-    branches: [develop-firebase, main]
   pull_request:
     branches: [develop-firebase, main]
   workflow_dispatch:
