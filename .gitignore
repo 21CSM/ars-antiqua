@@ -37,3 +37,8 @@ vite.config.ts.timestamp-*
 /.svelte-kit
 /build
 test-results/
+coverage/
+
+# Firebase
+.firebase/
+firebase-debug.log
