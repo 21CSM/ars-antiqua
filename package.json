@@ -12,8 +12,9 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-    "test:integration:ui": "playwright test --ui",
-		"test:unit": "vitest"
+		"test:integration:ui": "playwright test --ui",
+		"test:unit": "vitest --run",
+		"test:unit:watch": "vitest"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
