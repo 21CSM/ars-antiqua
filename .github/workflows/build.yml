@@ -29,6 +29,9 @@ jobs:
       - name: Run Nix Flake Checks
         run: |
           nix flake check
+      - name: Install Dependencies
+        run: |
+          nix develop -c pnpm install
       - name: Run Unit Tests
         run: |
           nix develop -c pnpm run test:unit
