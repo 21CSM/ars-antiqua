@@ -27,6 +27,12 @@ jobs:
           name: build
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
+          path: artifacts
+      - name: Prepare build directory
+        run: |
+          mkdir -p build
+          mv artifacts/* build/
+          rm -rf artifacts
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
