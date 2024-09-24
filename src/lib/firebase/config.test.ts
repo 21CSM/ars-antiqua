@@ -1,34 +1,28 @@
-import { describe, it, expect, vi } from 'vitest';
-
-// Mock Firebase initialization
-vi.mock('firebase/app', () => {
-  const mockApp = {};
-  return {
-    initializeApp: vi.fn(() => mockApp)
-  };
-});
-
-// Import after mocking
-import { initializeApp } from 'firebase/app';
-import { app } from './config';
+import { describe, it, expect } from 'vitest';
+import { firebaseConfig } from './config';
 
 describe('Firebase Configuration', () => {
-  it('initializes Firebase with all required fields', () => {
-    expect(initializeApp).toHaveBeenCalledWith(
+  it('has all required fields', () => {
+    expect(firebaseConfig).toEqual(
       expect.objectContaining({
         apiKey: expect.any(String),
         authDomain: expect.any(String),
         projectId: expect.any(String),
         storageBucket: expect.any(String),
         messagingSenderId: expect.any(String),
-        appId: expect.any(String)
-        // Remove measurementId if it's not in your config
+        appId: expect.any(String),
+        measurementId: expect.any(String)
       })
     );
   });
 
-  it('exports the initialized app', () => {
-    expect(app).toBeDefined();
-    expect(app).toBe(vi.mocked(initializeApp).mock.results[0].value);
+  it('has valid configuration values', () => {
+    expect(firebaseConfig.apiKey).toMatch(/^AIza[0-9A-Za-z-_]{35}$/);
+    expect(firebaseConfig.authDomain).toBe('ars-antiqua.firebaseapp.com');
+    expect(firebaseConfig.projectId).toBe('ars-antiqua');
+    expect(firebaseConfig.storageBucket).toBe('ars-antiqua.appspot.com');
+    expect(firebaseConfig.messagingSenderId).toMatch(/^\d+$/);
+    expect(firebaseConfig.appId).toMatch(/^1:\d+:web:[a-f0-9]+$/);
+    expect(firebaseConfig.measurementId).toMatch(/^G-[A-Z0-9]+$/);
   });
 });
