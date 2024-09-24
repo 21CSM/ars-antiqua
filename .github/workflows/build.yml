@@ -28,7 +28,11 @@ jobs:
       - name: Install Dependencies
         run: nix develop -c pnpm install
       - name: Run Unit Tests
-        run: nix develop -c pnpm run test:unit
+        run: nix develop -c pnpm run test:unit:coverage
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Run Integration Tests
         run: nix develop -c pnpm run test:integration
       - name: Build Project
