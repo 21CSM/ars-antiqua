@@ -22,11 +22,8 @@ describe('Firebase app initialization', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
   it('initializes Firebase with the correct config', async () => {
-    // Import the app module here to ensure it runs after mocks are set up
     const { app } = await import('./app');
-    
     expect(mockInitializeApp).toHaveBeenCalledTimes(1);
     expect(mockInitializeApp).toHaveBeenCalledWith(expect.objectContaining({
       apiKey: 'mock-api-key',
