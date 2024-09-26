@@ -5,26 +5,16 @@ import { auth } from '$lib/firebase';
 function createUserStore() {
   let unsubscribe: (() => void) | undefined;
 
-  // Check if we're in a browser environment
-  if (typeof window === 'undefined') {
-    console.warn('Not in browser environment');
-    const { subscribe } = writable<User | null>(null);
-    return {
-      subscribe,
-    };
-  }
-
-  const { subscribe } = writable<User | null>(auth.getCurrentUser(), (set) => {
-    unsubscribe = auth.onAuthStateChanged((user) => {
-      set(user);
-    });
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
+  const { subscribe, set, update } = writable<{ user: User | null; loading: boolean }>({
+    user: null,
+    loading: true, // Add a loading state to wait for auth to resolve
   });
+
+  if (typeof window !== 'undefined') {
+    unsubscribe = auth.onAuthStateChanged((user) => {
+      set({ user, loading: false }); // Once Firebase resolves, update user and loading
+    });
+  }
 
   return {
     subscribe,

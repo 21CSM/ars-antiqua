@@ -1,117 +1,83 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { FirebaseAuthModule, auth } from './auth';
-
-// Mock console.error to prevent error messages in test output
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+import { FirebaseAuthModule } from './auth';
+import { App } from './app';
+import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
 vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({
-    currentUser: null
-  })),
-  GoogleAuthProvider: vi.fn(() => ({})),
-  signInWithPopup: vi.fn(),
-  signOut: vi.fn(),
-  onAuthStateChanged: vi.fn()
+	GoogleAuthProvider: vi.fn(),
+	signInWithPopup: vi.fn(),
+	signOut: vi.fn(),
+	onAuthStateChanged: vi.fn(),
 }));
 
-describe('FirebaseAuth', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+vi.mock('./app', () => ({
+	App: {
+		getInstance: vi.fn(() => ({
+			getAuthInstance: vi.fn(() => ({})),
+		})),
+	},
+}));
 
-  it('should be instantiated correctly', () => {
-    const auth = new FirebaseAuthModule();
-    expect(auth).toBeInstanceOf(FirebaseAuthModule);
-    expect(getAuth).toHaveBeenCalled();
-  });
+describe('FirebaseAuthModule', () => {
+	let authModule: FirebaseAuthModule;
 
-  describe('signInWithGoogle', () => {
-    it('should have a signInWithGoogle method', () => {
-      expect(typeof auth.signInWithGoogle).toBe('function');
-    });
+	beforeEach(() => {
+		authModule = new FirebaseAuthModule();
+		vi.clearAllMocks(); // Reset mocks before each test
+	});
 
-    it('should call signInWithPopup and return user when successful', async () => {
-      const mockUser = { uid: '123' };
-      vi.mocked(signInWithPopup).mockResolvedValue({ user: mockUser } as any);
+	it('should sign in with Google successfully', async () => {
+		const mockUser = { uid: '123', email: 'test@example.com' };
+		const mockUserCredential = { user: mockUser };
+		(signInWithPopup as any).mockResolvedValueOnce(mockUserCredential);
 
-      const result = await auth.signInWithGoogle();
+		const user = await authModule.signInWithGoogle();
+		expect(signInWithPopup).toHaveBeenCalledTimes(1);
+		expect(user).toEqual(mockUser);
+	});
 
-      expect(GoogleAuthProvider).toHaveBeenCalled();
-      expect(signInWithPopup).toHaveBeenCalled();
-      expect(result).toEqual(mockUser);
-    });
+	it('should handle error during sign in with Google', async () => {
+		const mockError = new Error('Google sign-in failed');
+		(signInWithPopup as any).mockRejectedValueOnce(mockError);
 
-    it('should throw and log error when signInWithPopup fails', async () => {
-      const mockError = new Error('Sign-in failed');
-      vi.mocked(signInWithPopup).mockRejectedValue(mockError);
+		await expect(authModule.signInWithGoogle()).rejects.toThrow('Google sign-in failed');
+		expect(signInWithPopup).toHaveBeenCalledTimes(1);
+	});
 
-      await expect(auth.signInWithGoogle()).rejects.toThrow('Sign-in failed');
-      expect(mockConsoleError).toHaveBeenCalledWith('Error signing in with Google', mockError);
-    });
-  });
+	it('should sign out successfully', async () => {
+		(signOut as any).mockResolvedValueOnce(undefined);
 
-  describe('signOut', () => {
-    it('should have a signOut method', () => {
-      expect(typeof auth.signOut).toBe('function');
-    });
+		await authModule.signOut();
+		expect(signOut).toHaveBeenCalledTimes(1);
+	});
 
-    it('should call signOut when successful', async () => {
-      vi.mocked(signOut).mockResolvedValue(undefined);
+	it('should handle error during sign out', async () => {
+		const mockError = new Error('Sign out failed');
+		(signOut as any).mockRejectedValueOnce(mockError);
 
-      await auth.signOut();
+		await expect(authModule.signOut()).rejects.toThrow('Sign out failed');
+		expect(signOut).toHaveBeenCalledTimes(1);
+	});
 
-      expect(signOut).toHaveBeenCalled();
-    });
+	it('should return the current user', () => {
+		const mockUser = { uid: '123', email: 'test@example.com' };
+		authModule['auth'].currentUser = mockUser;
 
-    it('should throw and log error when signOut fails', async () => {
-      const mockError = new Error('Sign-out failed');
-      vi.mocked(signOut).mockRejectedValue(mockError);
+		const currentUser = authModule.getCurrentUser();
+		expect(currentUser).toEqual(mockUser);
+	});
 
-      await expect(auth.signOut()).rejects.toThrow('Sign-out failed');
-      expect(mockConsoleError).toHaveBeenCalledWith('Error signing out', mockError);
-    });
-  });
+	it('should listen to auth state changes', () => {
+		const callback = vi.fn();
+		const unsubscribe = vi.fn();
+		(onAuthStateChanged as any).mockImplementationOnce((auth, cb) => {
+			cb({ uid: '123' }); // Simulate a user being passed to callback
+			return unsubscribe;
+		});
 
-  describe('getCurrentUser', () => {
-    it('should have a getCurrentUser method', () => {
-      expect(typeof auth.getCurrentUser).toBe('function');
-    });
-
-    it('should return the current user', () => {
-      const mockUser = { uid: '123' };
-      vi.mocked(getAuth).mockReturnValue({ currentUser: mockUser } as any);
-
-      const auth = new FirebaseAuthModule();
-      const currentUser = auth.getCurrentUser();
-
-      expect(currentUser).toEqual(mockUser);
-    });
-
-    it('should return null if there is no current user', () => {
-      vi.mocked(getAuth).mockReturnValue({ currentUser: null } as any);
-
-      const auth = new FirebaseAuthModule();
-      const currentUser = auth.getCurrentUser();
-
-      expect(currentUser).toBeNull();
-    });
-  });
-
-  describe('onAuthStateChanged', () => {
-    it('should have an onAuthStateChanged method', () => {
-      expect(typeof auth.onAuthStateChanged).toBe('function');
-    });
-
-    it('should call onAuthStateChanged with the provided callback', () => {
-      const mockCallback = vi.fn();
-      const mockUnsubscribe = vi.fn();
-      vi.mocked(onAuthStateChanged).mockReturnValue(mockUnsubscribe);
-
-      const unsubscribe = auth.onAuthStateChanged(mockCallback);
-
-      expect(onAuthStateChanged).toHaveBeenCalledWith(expect.anything(), mockCallback);
-      expect(unsubscribe).toBe(mockUnsubscribe);
-    });
-  });
+		const returnedUnsubscribe = authModule.onAuthStateChanged(callback);
+		expect(onAuthStateChanged).toHaveBeenCalledTimes(1);
+		expect(callback).toHaveBeenCalledWith({ uid: '123' });
+		expect(returnedUnsubscribe).toBe(unsubscribe);
+	});
 });

@@ -1,5 +1,4 @@
 import {
-	getAuth,
 	GoogleAuthProvider,
 	onAuthStateChanged,
 	signInWithPopup,
@@ -8,15 +7,17 @@ import {
 	type User,
 	type UserCredential
 } from 'firebase/auth';
+import { App } from './app';
 
 export class FirebaseAuthModule {
 	private auth: Auth;
 
 	constructor() {
-		this.auth = getAuth();
+		const app = App.getInstance();
+		this.auth = app.getAuthInstance();
 	}
 
-	public async signInWithGoogle() {
+	public signInWithGoogle = async () => {
 		const provider: GoogleAuthProvider = new GoogleAuthProvider();
 		try {
 			const result: UserCredential = await signInWithPopup(this.auth, provider);
@@ -25,24 +26,24 @@ export class FirebaseAuthModule {
 			console.error('Error signing in with Google', error);
 			throw error;
 		}
-	}
+	};
 
-	public async signOut() {
+	public signOut = async () => {
 		try {
 			await signOut(this.auth);
 		} catch (error) {
 			console.error('Error signing out', error);
 			throw error;
 		}
-	}
+	};
 
-	public getCurrentUser(): User | null {
+	public getCurrentUser = (): User | null => {
 		return this.auth.currentUser;
-	}
+	};
 
-	public onAuthStateChanged(callback: (user: User | null) => void): () => void {
+	public onAuthStateChanged = (callback: (user: User | null) => void): (() => void) => {
 		return onAuthStateChanged(this.auth, callback);
-	}
+	};
 }
 
 export const auth: FirebaseAuthModule = new FirebaseAuthModule();
