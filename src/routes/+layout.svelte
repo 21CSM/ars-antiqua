@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { user } from '$lib/stores/user'; // Your user store
+	import { userStore } from '$lib/stores/user'; // Your user store
 	import LoginForm from '$lib/components/auth/LoginForm.svelte';
 	import { onDestroy } from 'svelte';
 	import IconMusicNote from '~icons/mdi/music-note'; // Import the music note icon
@@ -8,7 +8,7 @@
 	let loading = true;
 	let authenticated = false;
 
-	const unsubscribe = user.subscribe((state) => {
+	const unsubscribe = userStore.subscribe((state) => {
 		loading = state.loading;
 		authenticated = !!state.user;
 	});

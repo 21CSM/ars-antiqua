@@ -1,8 +1,11 @@
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
+ <script>
+	import { userStore } from '$lib/stores/user';
+ </script>
 
 <div class="container h-full mx-auto flex justify-center items-center">
 	<div class="space-y-5">
-		<h1 class="h1">Hello from Firebase (Preview 3)!</h1>
+		<h1 class="h1">Hello {$userStore.user?.displayName ?? "User"}!</h1>
 		<p>Start by exploring:</p>
 		<ul>
 			<li><code class="code">/src/routes/+layout.svelte</code> - barebones layout</li>
