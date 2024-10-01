@@ -1,5 +1,4 @@
-// app.ts
-import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { firebaseConfig } from './config';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
@@ -11,9 +10,13 @@ export class App {
   private storage: FirebaseStorage;
 
   private constructor() {
-    this.app = initializeApp(firebaseConfig);
+    if (getApps().length === 0) {
+      this.app = initializeApp(firebaseConfig);
+    } else {
+      this.app = getApps()[0];
+    }
     this.auth = getAuth(this.app);
-	this.storage = getStorage(this.app);
+    this.storage = getStorage(this.app);
   }
 
   public static getInstance(): App {
@@ -28,6 +31,6 @@ export class App {
   }
 
   public getStorageInstance(): FirebaseStorage {
-	return this.storage;
+    return this.storage;
   }
 }
