@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="4.0.1">
+  <meiHead>
+    <fileDesc>
+      <titleStmt>
+        <title>Simple Medieval Chant</title>
+      </titleStmt>
+    </fileDesc>
+  </meiHead>
+  <music>
+    <body>
+      <mdiv>
+        <score>
+          <scoreDef>
+            <staffGrp>
+              <staffDef n="1" lines="4" notationtype="neume" clef.shape="C" clef.line="4"/>
+            </staffGrp>
+          </scoreDef>
+          <section>
+            <staff n="1">
+              <layer>
+                <neume>
+                  <nc pname="c" oct="4" />
+                </neume>
+                <neume>
+                  <nc pname="d" oct="4" />
+                </neume>
+                <neume>
+                  <nc pname="e" oct="4" />
+                </neume>
+                <neume>
+                  <nc pname="f" oct="4" />
+                </neume>
+                <neume>
+                  <nc pname="e" oct="4" />
+                </neume>
+                <neume>
+                  <nc pname="d" oct="4" />
+                </neume>
+                <neume>
+                  <nc pname="c" oct="4" />
+                </neume>
+              </layer>
+            </staff>
+          </section>
+        </score>
+      </mdiv>
+    </body>
+  </music>
+</mei>
