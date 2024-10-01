@@ -4,9 +4,9 @@
 	import { storage } from '$lib/firebase';
   
 	const meiFiles = [
-	  { path: 'mei_files/medieval_chant.mei', title: 'Medieval Chant Example' },
-	  { path: 'renaissance_mei_1.mei', title: 'Renaissance Motet Example' },
-	  { path: 'baroque_mei_1.mei', title: 'Baroque Fugue Example' },
+	  { path: 'mei_files/beethoven_hymn_to_joy.mei', title: 'Beethoven Example' },
+	  { path: 'renaissance_mei_1.mei', title: 'Renaissance Motet Example - Should Error' },
+	  { path: 'baroque_mei_1.mei', title: 'Baroque Fugue Example - Should Error' },
 	  // Add more MEI files as needed
 	];
   
