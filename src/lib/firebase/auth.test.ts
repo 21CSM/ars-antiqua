@@ -1,21 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FirebaseAuthModule } from './auth';
-import { App } from './app';
-import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
 vi.mock('firebase/auth', () => ({
 	GoogleAuthProvider: vi.fn(),
 	signInWithPopup: vi.fn(),
 	signOut: vi.fn(),
-	onAuthStateChanged: vi.fn(),
+	onAuthStateChanged: vi.fn()
 }));
 
 vi.mock('./app', () => ({
 	App: {
 		getInstance: vi.fn(() => ({
-			getAuthInstance: vi.fn(() => ({})),
-		})),
-	},
+			getAuthInstance: vi.fn(() => ({}))
+		}))
+	}
 }));
 
 describe('FirebaseAuthModule', () => {
@@ -62,7 +61,7 @@ describe('FirebaseAuthModule', () => {
 	it('should return the current user', () => {
 		const mockUser = { uid: '123', email: 'test@example.com' };
 		Object.defineProperty(authModule['auth'], 'currentUser', {
-			get: () => mockUser,
+			get: () => mockUser
 		});
 
 		const currentUser = authModule.getCurrentUser();
@@ -72,10 +71,12 @@ describe('FirebaseAuthModule', () => {
 	it('should listen to auth state changes', () => {
 		const callback = vi.fn();
 		const unsubscribe = vi.fn();
-		(onAuthStateChanged as any).mockImplementationOnce((auth: any, cb: (user: { uid: string }) => void) => {
-			cb({ uid: '123' }); // Simulate a user being passed to callback
-			return unsubscribe;
-		});
+		(onAuthStateChanged as any).mockImplementationOnce(
+			(auth: any, cb: (user: { uid: string }) => void) => {
+				cb({ uid: '123' }); // Simulate a user being passed to callback
+				return unsubscribe;
+			}
+		);
 
 		const returnedUnsubscribe = authModule.onAuthStateChanged(callback);
 		expect(onAuthStateChanged).toHaveBeenCalledTimes(1);
