@@ -61,7 +61,9 @@ describe('FirebaseAuthModule', () => {
 
 	it('should return the current user', () => {
 		const mockUser = { uid: '123', email: 'test@example.com' };
-		authModule['auth'].currentUser = mockUser;
+		Object.defineProperty(authModule['auth'], 'currentUser', {
+			get: () => mockUser,
+		});
 
 		const currentUser = authModule.getCurrentUser();
 		expect(currentUser).toEqual(mockUser);
@@ -70,7 +72,7 @@ describe('FirebaseAuthModule', () => {
 	it('should listen to auth state changes', () => {
 		const callback = vi.fn();
 		const unsubscribe = vi.fn();
-		(onAuthStateChanged as any).mockImplementationOnce((auth, cb) => {
+		(onAuthStateChanged as any).mockImplementationOnce((auth: any, cb: (user: { uid: string }) => void) => {
 			cb({ uid: '123' }); // Simulate a user being passed to callback
 			return unsubscribe;
 		});
