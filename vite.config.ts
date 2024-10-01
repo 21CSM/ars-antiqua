@@ -31,6 +31,7 @@ export default defineConfig({
         '**/*.svelte',
         '**/index.ts',
         '**/lib/stores/**', // TODO: Fix coverage for stores
+        '**/lib/score/verovioWorker.ts', // Worker files are not included in coverage
       ],
       include: ['src/**/*.ts', 'src/**/*.js'],
     },

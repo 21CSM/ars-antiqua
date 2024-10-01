@@ -64,4 +64,18 @@ describe('App', () => {
     expect(storageInstance).toEqual(mockStorage);
     expect(getStorage).toHaveBeenCalledTimes(1);
   });
+
+  it('should use existing Firebase app if apps already exist', () => {
+    const existingApp = { name: 'existingApp' };
+    (getApps as any).mockReturnValueOnce([existingApp]);
+
+    App.getInstance();
+
+    expect(initializeApp).not.toHaveBeenCalled();
+    expect(getAuth).toHaveBeenCalledTimes(1);
+    expect(getStorage).toHaveBeenCalledTimes(1);
+    // We're not checking the exact argument here, just that they were called
+    expect(getAuth).toHaveBeenCalled();
+    expect(getStorage).toHaveBeenCalled();
+  });
 });
