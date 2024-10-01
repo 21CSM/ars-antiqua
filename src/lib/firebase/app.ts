@@ -1,25 +1,36 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { firebaseConfig } from './config';
 import { getAuth, type Auth } from 'firebase/auth';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
 export class App {
-	private static instance: App;
-	private auth: Auth;
+  private static instance: App;
+  private auth: Auth;
+  private app: FirebaseApp;
+  private storage: FirebaseStorage;
 
-	private constructor() {
-		const app = initializeApp(firebaseConfig);
-		this.auth = getAuth(app);
-	}
+  private constructor() {
+    if (getApps().length === 0) {
+      this.app = initializeApp(firebaseConfig);
+    } else {
+      this.app = getApps()[0];
+    }
+    this.auth = getAuth(this.app);
+    this.storage = getStorage(this.app);
+  }
 
-	// Ensure App is a singleton so it initializes only once
-	public static getInstance(): App {
-		if (!App.instance) {
-			App.instance = new App();
-		}
-		return App.instance;
-	}
+  public static getInstance(): App {
+    if (!App.instance) {
+      App.instance = new App();
+    }
+    return App.instance;
+  }
 
-	public getAuthInstance(): Auth {
-		return this.auth;
-	}
+  public getAuthInstance(): Auth {
+    return this.auth;
+  }
+
+  public getStorageInstance(): FirebaseStorage {
+    return this.storage;
+  }
 }
