@@ -43,9 +43,25 @@ jobs:
           name: build
           path: build
 
-  deploy-preview:
-    needs: build
+  changes:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+    steps:
+        # For pull requests it's not necessary to checkout the code
+        - uses: dorny/paths-filter@v3
+          id: filter
+          with:
+            filters: |
+              src:
+                - 'src/**'
+
+  deploy-preview:
+    needs: [build, changes]
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.src == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
