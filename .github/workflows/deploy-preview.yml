@@ -1,0 +1,80 @@
+name: Deploy Preview
+on:
+  pull_request:
+    branches: [develop-firebase, main]
+  workflow_dispatch:
+
+jobs:
+  flake-health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check Flake Health
+        uses: DeterminateSystems/flake-checker-action@v9
+
+  build:
+    runs-on: ubuntu-latest
+    needs: flake-health-check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v14
+      - name: Run Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Run Nix Flake Checks
+        run: nix flake check
+      - name: Install Dependencies
+        run: nix develop -c pnpm install
+      - name: Run Unit Tests
+        run: nix develop -c pnpm run test:unit:coverage
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Run Integration Tests
+        run: nix develop -c pnpm run test:integration
+      - name: Build Project
+        run: nix develop -c pnpm run build
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build
+
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+    steps:
+        # For pull requests it's not necessary to checkout the code
+        - uses: dorny/paths-filter@v3
+          id: filter
+          with:
+            filters: |
+              src:
+                - 'src/**'
+
+  deploy-preview:
+    needs: [build, changes]
+    runs-on: ubuntu-latest
+    if: ${{ needs.changes.outputs.src == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: build
+      - name: Deploy to Firebase Preview
+        if: github.actor != 'dependabot[bot]'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ARS_ANTIQUA }}
+          projectId: ars-antiqua
+          channelId: preview
