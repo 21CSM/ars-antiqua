@@ -21,7 +21,7 @@
 
 	<button
 		on:click={goHome}
-		class="btn variant-filled-primary flex items-center justify-center mt-4"
+		class="btn variant-ghost-surface flex items-center justify-center mt-4"
 	>
 		<IconHome class="mr-2" />
 
