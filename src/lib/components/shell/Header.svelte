@@ -97,7 +97,8 @@
                         aria-expanded={isDropdownOpen}
                     >
                         <span class="text-sm font-medium">{userName}</span>
-                        <Avatar width="w-10" src={userAvatar ?? ''} background="bg-surface-500">
+                        <Avatar border="border-4 border-surface-300-600-token hover:!border-primary-500"
+                        cursor="cursor-pointer" width="w-10" src={userAvatar ?? ''} background="bg-surface-500">
                             <IconAccount class="w-6 h-6" />
                         </Avatar>
                     </button>
@@ -123,7 +124,8 @@
             {#if userName}
                 <div class="relative" use:clickOutside on:clickOutside={() => isDropdownOpen = false}>
                     <button on:click={toggleDropdown} class="dropdown-toggle" aria-haspopup="true" aria-expanded={isDropdownOpen}>
-                        <Avatar width="w-8" src={userAvatar ?? ''} background="bg-surface-500">
+                        <Avatar border="border-4 border-surface-300-600-token hover:!border-primary-500"
+                        cursor="cursor-pointer" width="w-10" src={userAvatar ?? ''} background="bg-surface-500">
                             <IconAccount class="w-5 h-5" />
                         </Avatar>
                     </button>
