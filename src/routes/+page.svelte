@@ -7,7 +7,6 @@
 	  { path: 'mei_files/beethoven_hymn_to_joy.mei', title: 'Beethoven Example' },
 	  { path: 'renaissance_mei_1.mei', title: 'Renaissance Motet Example - Should Error' },
 	  { path: 'baroque_mei_1.mei', title: 'Baroque Fugue Example - Should Error' },
-	  // Add more MEI files as needed
 	];
   
 	let meiDataMap: Record<string, string> = {};
@@ -32,7 +31,7 @@
   <svelte:head>
 	<title>Historical Music Notation Examples</title>
   </svelte:head>
-  
+   
   <div class="container mx-auto px-4 py-8">
 	<h1 class="text-3xl font-bold mb-6">Historical Music Notation Examples</h1>
 	

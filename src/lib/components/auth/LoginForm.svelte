@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { auth } from '$lib/firebase';
 	import sheetMusicImage from '$lib/assets/medieval-sheet-music.png';
+	import logo from '$lib/assets/logo.svg';
 	let error: string = '';
 </script>
 
@@ -8,7 +9,7 @@
 	<div class="background-image" style="background-image: url({sheetMusicImage});"></div>
 
 	<div class="max-w-md w-full bg-white shadow-lg rounded-lg p-6 space-y-4 border border-gray-200 z-10">
-		<h1 class="text-3xl font-serif font-semibold text-center text-gray-800">Ars Antiqua Online</h1>
+		<img src={logo} alt="Ars Antiqua Online">
 		<p class="text-center text-gray-600">
 			Explore the rich history of medieval music.
 		</p>

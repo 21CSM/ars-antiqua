@@ -1,56 +1,45 @@
 <script lang="ts">
-	import '../app.postcss';
-	import { userStore } from '$lib/stores/user'; // Your user store
-	import LoginForm from '$lib/components/auth/LoginForm.svelte';
-	import { onDestroy } from 'svelte';
-	import IconMusicNote from '~icons/mdi/music-note'; // Import the music note icon
+    import { onMount, onDestroy } from 'svelte';
+    import { userStore } from '$lib/stores/user';
+    import LoginForm from '$lib/components/auth/LoginForm.svelte';
+    import LoadingScreen from '$lib/components/shell/LoadingScreen.svelte';
+    import AuthenticatedApp from '$lib/components/shell/AuthenticatedApp.svelte';
+    import '../app.postcss';
+    import { setInitialClassState } from '@skeletonlabs/skeleton';
 
-	let loading = true;
-	let authenticated = false;
+    // State variables
+    let loading = true;
+    let authenticated = false;
 
-	const unsubscribe = userStore.subscribe((state) => {
-		loading = state.loading;
-		authenticated = !!state.user;
-	});
+    // Subscribe to userStore
+    const unsubscribe = userStore.subscribe((state) => {
+        loading = state.loading;
+        authenticated = !!state.user;
+    });
 
-	onDestroy(() => {
-		unsubscribe();
-	});
+    onMount(() => {
+        setInitialClassState();
+    });
+
+    onDestroy(() => {
+        unsubscribe();
+    });
 </script>
 
-<div>
-	{#if loading}
-		<div class="flex flex-col items-center justify-center h-screen space-y-4">
-			<div class="music-note-loader">
-				<IconMusicNote class="text-primary-500 w-12 h-12" />
-			</div>
-			<p class="text-lg font-semibold text-gray-300">Loading...</p>
-		</div>
-	{:else if authenticated}
-		<slot />
-	{:else}
-		<LoginForm />
-	{/if}
+<svelte:head>
+    {@html `<script nonce="%sveltekit.nonce%">(${setInitialClassState.toString()})();</script>`}
+</svelte:head>
+
+<div class="app-container">
+    {#if loading}
+        <LoadingScreen />
+    {:else if authenticated}
+        <AuthenticatedApp>
+            <div class="content-container">
+                <slot />
+            </div>
+        </AuthenticatedApp>
+    {:else}
+        <LoginForm />
+    {/if}
 </div>
-
-<style>
-	.music-note-loader {
-		animation: bounce 1.5s infinite;
-	}
-
-	@keyframes bounce {
-		0%,
-		20%,
-		50%,
-		80%,
-		100% {
-			transform: translateY(0);
-		}
-		40% {
-			transform: translateY(-30px);
-		}
-		60% {
-			transform: translateY(-15px);
-		}
-	}
-</style>
