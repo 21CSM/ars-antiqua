@@ -32,6 +32,7 @@ export default defineConfig({
         '**/index.ts',
         '**/lib/stores/**', // TODO: Fix coverage for stores
         '**/lib/score/verovioWorker.ts', // Worker files are not included in coverage
+        '**/lib/types.ts', // Types are not included in coverage
       ],
       include: ['src/**/*.ts', 'src/**/*.js'],
     },
