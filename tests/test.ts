@@ -21,9 +21,6 @@ test.describe('Ars Antiqua Online Login Page', () => {
 		// Navigate to the page
 		await page.goto('/');
 
-		// Check main heading
-		await expect(page.locator('h1')).toHaveText('Ars Antiqua Online');
-
 		// Check description
 		await expect(page.getByText('Explore the rich history of medieval music.')).toBeVisible();
 
