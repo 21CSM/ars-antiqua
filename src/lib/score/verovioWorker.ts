@@ -10,17 +10,21 @@ interface WorkerMessage {
 
 let verovioToolkit: VerovioToolkit | null = null;
 
+function workerLog(...args: any[]) {
+  self.postMessage({ type: 'log', message: args.map(arg => String(arg)).join(' ') });
+}
+
 async function initializeVerovio() {
   if (!verovioToolkit) {
     try {
-      console.log('Creating Verovio module...');
+      workerLog('Creating Verovio module...');
       const VerovioModule = await createVerovioModule();
-      console.log('Verovio module created successfully');
+      workerLog('Verovio module created successfully');
       verovioToolkit = new VerovioToolkit(VerovioModule);
-      console.log('Verovio toolkit initialized');
-      console.log('Verovio version:', verovioToolkit.getVersion());
+      workerLog('Verovio toolkit initialized');
+      workerLog('Verovio version:', verovioToolkit.getVersion());
     } catch (error) {
-      console.error('Error initializing Verovio:', error);
+      workerLog('Error initializing Verovio:', error);
       throw error;
     }
   }
@@ -38,54 +42,50 @@ self.onmessage = async function (e: MessageEvent<WorkerMessage>) {
   try {
     await withVerovio(() => {
       const { action, data, page, options } = e.data;
-      console.log(`Received action: ${action}`);
-
+      workerLog(`Received action: ${action}`);
       switch (action) {
         case 'loadData':
           if (data) {
-            console.log('Loading data:', data.substring(0, 100) + '...');
+            workerLog('Loading data:', data.substring(0, 100) + '...');
             verovioToolkit!.loadData(data);
             self.postMessage({ action: 'dataLoaded' });
           } else {
             throw new Error('No data provided for loading');
           }
           break;
-
         case 'renderToSVG':
           if (typeof page === 'number') {
             try {
-              console.log('Starting renderToSVG...');
+              workerLog('Starting renderToSVG...');
               // Add a small delay before rendering
               setTimeout(() => {
                 const svg = verovioToolkit!.renderToSVG(page, !!options);
-                console.log('renderToSVG completed successfully');
+                workerLog('renderToSVG completed successfully');
                 self.postMessage({ action: 'renderComplete', svg });
               }, 100);
             } catch (error) {
-              console.error('Error in renderToSVG:', error);
+              workerLog('Error in renderToSVG:', error);
               throw error;
             }
           } else {
             throw new Error('Invalid page number for rendering');
           }
           break;
-
         case 'setOptions':
           if (options) {
-            console.log('Setting options:', options);
+            workerLog('Setting options:', options);
             verovioToolkit!.setOptions(options);
             self.postMessage({ action: 'optionsSet' });
           } else {
             throw new Error('No options provided');
           }
           break;
-
         default:
           throw new Error('Unknown action');
       }
     });
   } catch (error) {
-    console.error('Error in worker:', error);
+    workerLog('Error in worker:', error);
     if (error instanceof Error) {
       self.postMessage({ error: error.message });
     } else {
