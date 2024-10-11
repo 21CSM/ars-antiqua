@@ -13,10 +13,12 @@ let verovioToolkit: VerovioToolkit | null = null;
 async function initializeVerovio() {
   if (!verovioToolkit) {
     try {
-      console.log('Initializing Verovio...');
+      console.log('Creating Verovio module...');
       const VerovioModule = await createVerovioModule();
+      console.log('Verovio module created successfully');
       verovioToolkit = new VerovioToolkit(VerovioModule);
-      console.log('Verovio initialized successfully');
+      console.log('Verovio toolkit initialized');
+      console.log('Verovio version:', verovioToolkit.getVersion());
     } catch (error) {
       console.error('Error initializing Verovio:', error);
       throw error;
@@ -41,6 +43,7 @@ self.onmessage = async function (e: MessageEvent<WorkerMessage>) {
       switch (action) {
         case 'loadData':
           if (data) {
+            console.log('Loading data:', data.substring(0, 100) + '...');
             verovioToolkit!.loadData(data);
             self.postMessage({ action: 'dataLoaded' });
           } else {
@@ -50,8 +53,18 @@ self.onmessage = async function (e: MessageEvent<WorkerMessage>) {
 
         case 'renderToSVG':
           if (typeof page === 'number') {
-            const svg = verovioToolkit!.renderToSVG(page, !!options);
-            self.postMessage({ action: 'renderComplete', svg });
+            try {
+              console.log('Starting renderToSVG...');
+              // Add a small delay before rendering
+              setTimeout(() => {
+                const svg = verovioToolkit!.renderToSVG(page, !!options);
+                console.log('renderToSVG completed successfully');
+                self.postMessage({ action: 'renderComplete', svg });
+              }, 100);
+            } catch (error) {
+              console.error('Error in renderToSVG:', error);
+              throw error;
+            }
           } else {
             throw new Error('Invalid page number for rendering');
           }
@@ -59,6 +72,7 @@ self.onmessage = async function (e: MessageEvent<WorkerMessage>) {
 
         case 'setOptions':
           if (options) {
+            console.log('Setting options:', options);
             verovioToolkit!.setOptions(options);
             self.postMessage({ action: 'optionsSet' });
           } else {
@@ -72,8 +86,13 @@ self.onmessage = async function (e: MessageEvent<WorkerMessage>) {
     });
   } catch (error) {
     console.error('Error in worker:', error);
-    self.postMessage({ error: (error as Error).message });
+    if (error instanceof Error) {
+      self.postMessage({ error: error.message });
+    } else {
+      self.postMessage({ error: 'An unknown error occurred' });
+    }
   }
 };
+
 
 export {};
