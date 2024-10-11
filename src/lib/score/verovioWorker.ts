@@ -11,7 +11,12 @@ interface WorkerMessage {
 let verovioToolkit: VerovioToolkit | null = null;
 
 function workerLog(...args: any[]) {
-  self.postMessage({ type: 'log', message: args.map(arg => String(arg)).join(' ') });
+  const message = args.map(arg => 
+    typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+  ).join(' ');
+  self.postMessage({ type: 'log', message });
+  // Fallback to console.log in case it's supported
+  console.log('Worker:', message);
 }
 
 async function initializeVerovio() {
@@ -38,11 +43,15 @@ async function withVerovio(action: () => void) {
   action();
 }
 
+// Send a message immediately when the worker starts
+self.postMessage({ type: 'workerStarted' });
+
 self.onmessage = async function (e: MessageEvent<WorkerMessage>) {
+  workerLog('Received message in worker:', e.data);
   try {
     await withVerovio(() => {
       const { action, data, page, options } = e.data;
-      workerLog(`Received action: ${action}`);
+      workerLog(`Processing action: ${action}`);
       switch (action) {
         case 'loadData':
           if (data) {
@@ -55,14 +64,11 @@ self.onmessage = async function (e: MessageEvent<WorkerMessage>) {
           break;
         case 'renderToSVG':
           if (typeof page === 'number') {
+            workerLog('Starting renderToSVG...');
             try {
-              workerLog('Starting renderToSVG...');
-              // Add a small delay before rendering
-              setTimeout(() => {
-                const svg = verovioToolkit!.renderToSVG(page, !!options);
-                workerLog('renderToSVG completed successfully');
-                self.postMessage({ action: 'renderComplete', svg });
-              }, 100);
+              const svg = verovioToolkit!.renderToSVG(page, !!options);
+              workerLog('renderToSVG completed successfully');
+              self.postMessage({ action: 'renderComplete', svg });
             } catch (error) {
               workerLog('Error in renderToSVG:', error);
               throw error;
@@ -87,9 +93,9 @@ self.onmessage = async function (e: MessageEvent<WorkerMessage>) {
   } catch (error) {
     workerLog('Error in worker:', error);
     if (error instanceof Error) {
-      self.postMessage({ error: error.message });
+      self.postMessage({ type: 'error', error: error.message, stack: error.stack });
     } else {
-      self.postMessage({ error: String(error) });
+      self.postMessage({ type: 'error', error: String(error) });
     }
   }
 };
