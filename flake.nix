@@ -16,7 +16,7 @@
           overlays = [ overlay ];
         };
         buildInputs = with pkgs; [
-          nodejs_20
+          nodejs_22
           pnpm
           playwright-test
           nodePackages.firebase-tools
@@ -39,8 +39,8 @@
           inherit (commonEnv) PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD PLAYWRIGHT_BROWSERS_PATH;
         } ''
           echo "Checking Node.js version..."
-          if ! node --version | grep -q "v20"; then
-            echo "Node.js v20 not found. Installed version: $(node --version)"
+          if ! node --version | grep -q "v22"; then
+            echo "Node.js v22 not found. Installed version: $(node --version)"
             exit 1
           fi
           echo "Checking pnpm availability..."
