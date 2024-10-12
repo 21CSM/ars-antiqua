@@ -9,9 +9,10 @@
 	let error: string | null = null;
 
 	interface WorkerMessage {
-		action: 'dataLoaded' | 'renderComplete' | 'optionsSet' | 'error';
+		action: 'dataLoaded' | 'renderComplete' | 'optionsSet' | 'error' | 'log';
 		svg?: string;
 		error?: string;
+		log?: string;
 	}
 
 	function debounce(func: Function, wait: number) {
@@ -34,7 +35,11 @@
 
 			worker.onmessage = (e: MessageEvent<WorkerMessage>) => {
 				console.log('Received message from worker:', e.data);
-				const { action, svg, error: workerError } = e.data;
+				const { action, svg, error: workerError, log } = e.data;
+
+				if (action === 'log' && log) {
+					console.log('Worker log:', log);
+				}
 
 				if (action === 'error' || workerError) {
 					console.error('Worker error:', workerError);
@@ -61,7 +66,10 @@
 
 			worker.onerror = (err) => {
 				console.error('Worker error event:', err);
-				error = 'An error occurred in the score renderer';
+				console.error('Error message:', err.message);
+				console.error('Error filename:', err.filename);
+				console.error('Error lineno:', err.lineno);
+				error = `Error in score renderer: ${err.message}`;
 			};
 
 			const handleResize = debounce(() => {
