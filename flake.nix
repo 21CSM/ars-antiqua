@@ -20,6 +20,7 @@
           pnpm
           playwright-test
           nodePackages.firebase-tools
+          nodePackages.http-server
         ];
         commonEnv = {
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
@@ -65,6 +66,11 @@
           echo "Checking Firebase tools availability..."
           if [ ! -e "${pkgs.nodePackages.firebase-tools}/bin/firebase" ]; then
             echo "Firebase tools not found in the expected location"
+            exit 1
+          fi
+          echo "Checking HTTP server availability..."
+          if [ ! -e "${pkgs.nodePackages.http-server}/bin/http-server" ]; then
+            echo "HTTP server not found in the expected location"
             exit 1
           fi
           touch $out
