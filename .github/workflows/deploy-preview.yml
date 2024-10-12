@@ -57,6 +57,7 @@ jobs:
             filters: |
               src:
                 - 'src/**'
+                - 'firebase.json'
 
   deploy-preview:
     needs: [build, changes]
