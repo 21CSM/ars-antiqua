@@ -12,8 +12,20 @@ export default defineConfig({
     autoInstall: true,
   })],
   worker: {
+    format: 'es',
 		plugins: () => [wasm(), topLevelAwait()]
 	},
+  optimizeDeps: {
+    exclude: ['verovio']
+  },
+  build: {
+    target: 'esnext',
+    rollupOptions: {
+      output: {
+        format: 'es'
+      }
+    }
+  },
   test: {
     include: ['src/**/*.{test,spec}.{js,ts}'],
     exclude: ['node_modules', '.svelte-kit', 'static'],
