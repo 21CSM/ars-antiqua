@@ -28,7 +28,7 @@
 		"@sveltejs/kit": "^2.6.1",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^9.6.0",
-		"@types/node": "22.5.5",
+		"@types/node": "22.7.5",
 		"@types/verovio": "^3.13.4",
 		"@vitest/coverage-v8": "^2.1.1",
 		"autoprefixer": "10.4.20",
